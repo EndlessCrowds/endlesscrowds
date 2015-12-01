@@ -11,7 +11,11 @@ class ProfileImageUploader < CarrierWave::Uploader::Base
   end
 
   def self.choose_storage
-    (Rails.env.production? and Configuration[:aws_access_key]) ? :fog : :file
+    if Rails.env.production? && defined? Configuration
+      (Configuration[:aws_access_key]) ? :fog : :file
+    else
+      # We should be running initial migrations to be here. The Configuration model does not yet exist to be read from
+    end
   end
 
   storage choose_storage
